@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"time"
 
@@ -38,18 +39,46 @@ func init() {
 }
 
 func startDashboard() {
-	// This is a placeholder function that would normally start the dashboard server
-	// In a real implementation, this would serve the UI and connect to the backend
+	// This function starts the dashboard server and serves the React UI
 
 	addr := fmt.Sprintf("localhost:%d", port)
 	url := fmt.Sprintf("http://%s", addr)
 
-	// Create a simple HTTP server
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "DMI CLI Dashboard Server\n")
-		fmt.Fprintf(w, "This is a placeholder for the actual dashboard UI.\n")
-		fmt.Fprintf(w, "In a real implementation, this would serve the React UI.\n")
-	})
+	// Get the current working directory
+	cwd, err := os.Getwd()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error getting current directory: %s\n", err)
+		os.Exit(1)
+	}
+
+	// Try to find the UI build directory
+	// First, check if we're in the project root
+	uiBuildPath := filepath.Join(cwd, "ui", "build")
+	if _, err := os.Stat(uiBuildPath); os.IsNotExist(err) {
+		// If not found, try going up one directory (in case we're in cmd/bdc-cli)
+		uiBuildPath = filepath.Join(cwd, "..", "..", "ui", "build")
+		if _, err := os.Stat(uiBuildPath); os.IsNotExist(err) {
+			// If still not found, serve the placeholder
+			fmt.Println("Warning: React UI build not found. Serving placeholder instead.")
+			fmt.Println("To serve the actual UI, run 'cd ui && npm run build' first.")
+
+			// Create a simple HTTP server with placeholder
+			http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+				fmt.Fprintf(w, "DMI CLI Dashboard Server\n")
+				fmt.Fprintf(w, "This is a placeholder for the actual dashboard UI.\n")
+				fmt.Fprintf(w, "In a real implementation, this would serve the React UI.\n")
+				fmt.Fprintf(w, "To see the actual UI, run 'cd ui && npm run build' first, then run this command again.")
+			})
+		} else {
+			// Found the UI build directory
+			fmt.Printf("Serving React UI from %s\n", uiBuildPath)
+			http.Handle("/", http.FileServer(http.Dir(uiBuildPath)))
+		}
+	} else {
+		// Found the UI build directory
+		fmt.Printf("Serving React UI from %s\n", uiBuildPath)
+		http.Handle("/", http.FileServer(http.Dir(uiBuildPath)))
+	}
 
 	// Start the server in a goroutine
 	go func() {

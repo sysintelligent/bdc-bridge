@@ -38,6 +38,7 @@ Thumbs.db
 /build/
 /bin/
 /dist/
+ui/build/
 
 # Environment variables
 .env
