@@ -28,6 +28,7 @@ bdc-bridge/
 - Node.js 16+
 - npm 8+
 - Docker (optional, for containerized development)
+- Minikube v1.32+ or equivalent local Kubernetes cluster
 
 ### Building and Running
 
