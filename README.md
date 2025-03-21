@@ -20,6 +20,17 @@ bdc-bridge/
     └── kubernetes/     # Kubernetes client integration
 ```
 
+## Ports Used
+
+The application uses the following ports:
+
+| Component     | Port  | Protocol | URL                     | Description                       |
+|---------------|-------|----------|-------------------------|-----------------------------------|
+| UI            | 3000  | HTTP     | http://localhost:3000   | React development server          |
+| Server        | 8080  | HTTP     | http://localhost:8080   | REST API and static content       |
+| Server        | 9090  | gRPC     | localhost:9090          | gRPC API                          |
+| CLI Dashboard | 8081  | HTTP     | http://localhost:8081   | CLI dashboard                     |
+
 ## Development Setup
 
 ### Prerequisites
