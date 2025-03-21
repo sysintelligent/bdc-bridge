@@ -1,57 +1,31 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import {
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Toolbar,
-  Divider,
-} from '@mui/material';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import AppsIcon from '@mui/icons-material/Apps';
-import SettingsIcon from '@mui/icons-material/Settings';
-
-const drawerWidth = 240;
+import { LayoutDashboard, AppWindow, Settings } from 'lucide-react';
+import { NavItem } from './ui/nav-item';
 
 const Sidebar: React.FC = () => {
-  const location = useLocation();
-
   const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
-    { text: 'Applications', icon: <AppsIcon />, path: '/applications' },
-    { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
+    { text: 'Dashboard', icon: LayoutDashboard, path: '/' },
+    { text: 'Applications', icon: AppWindow, path: '/applications' },
+    { text: 'Settings', icon: Settings, path: '/settings' },
   ];
 
   return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-      }}
-    >
-      <Toolbar />
-      <div style={{ overflow: 'auto' }}>
-        <List>
+    <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r bg-background md:flex">
+      <div className="h-16 w-full border-b" />
+      <nav className="flex-1 overflow-auto p-3">
+        <div className="space-y-1">
           {menuItems.map((item) => (
-            <ListItem
-              button
-              component={Link}
-              to={item.path}
-              key={item.text}
-              selected={location.pathname === item.path}
+            <NavItem 
+              key={item.text} 
+              to={item.path} 
+              icon={item.icon}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItem>
+              {item.text}
+            </NavItem>
           ))}
-        </List>
-        <Divider />
-      </div>
-    </Drawer>
+        </div>
+      </nav>
+    </aside>
   );
 };
 

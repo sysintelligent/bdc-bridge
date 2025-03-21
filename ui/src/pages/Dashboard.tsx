@@ -1,13 +1,4 @@
 import React from 'react';
-import {
-  Typography,
-  Grid,
-  Paper,
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-} from '@mui/material';
 import { useAppSelector } from '../hooks/redux';
 
 const Dashboard: React.FC = () => {
@@ -19,45 +10,39 @@ const Dashboard: React.FC = () => {
   const syncedApps = applications.filter((app) => app.syncStatus === 'Synced').length;
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Typography variant="h4" gutterBottom>
-        Dashboard
-      </Typography>
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Dashboard</h1>
 
-      <Grid container spacing={3}>
+      <div className="grid gap-4 md:grid-cols-3">
         {/* Summary Cards */}
-        <Grid item xs={12} md={4}>
-          <Paper elevation={2} sx={{ p: 2 }}>
-            <Typography variant="h6">Total Applications</Typography>
-            <Typography variant="h3">{totalApps}</Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Paper elevation={2} sx={{ p: 2 }}>
-            <Typography variant="h6">Healthy</Typography>
-            <Typography variant="h3">{healthyApps}</Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Paper elevation={2} sx={{ p: 2 }}>
-            <Typography variant="h6">Synced</Typography>
-            <Typography variant="h3">{syncedApps}</Typography>
-          </Paper>
-        </Grid>
+        <div className="rounded-lg border bg-card p-4 shadow">
+          <h3 className="text-lg font-medium">Total Applications</h3>
+          <p className="text-3xl font-bold">{totalApps}</p>
+        </div>
+        
+        <div className="rounded-lg border bg-card p-4 shadow">
+          <h3 className="text-lg font-medium">Healthy</h3>
+          <p className="text-3xl font-bold">{healthyApps}</p>
+        </div>
+        
+        <div className="rounded-lg border bg-card p-4 shadow">
+          <h3 className="text-lg font-medium">Synced</h3>
+          <p className="text-3xl font-bold">{syncedApps}</p>
+        </div>
+      </div>
 
-        {/* Recent Activity */}
-        <Grid item xs={12}>
-          <Card>
-            <CardHeader title="Recent Activity" />
-            <CardContent>
-              <Typography variant="body1">
-                No recent activity to display. Activity will appear here as you interact with your applications.
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    </Box>
+      {/* Recent Activity */}
+      <div className="rounded-lg border bg-card shadow">
+        <div className="border-b p-4">
+          <h2 className="text-xl font-semibold">Recent Activity</h2>
+        </div>
+        <div className="p-4">
+          <p>
+            No recent activity to display. Activity will appear here as you interact with your applications.
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 

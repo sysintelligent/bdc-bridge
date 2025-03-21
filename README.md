@@ -6,13 +6,13 @@ A tool between developers and complex backend infrastructure., inspired by Argo 
 
 The project is organized into three main components:
 
-1. **UI**: A React-based front-end built with TypeScript and Material-UI
+1. **UI**: A React-based front-end built with TypeScript and shadcn UI (powered by Tailwind CSS)
 2. **CMD**: A Go-based command-line interface using Cobra
 3. **Server**: A Go-based backend server with REST and gRPC endpoints
 
 ```
 bdc-bridge/
-├── ui/                 # React TypeScript frontend
+├── ui/                 # React TypeScript frontend with shadcn UI
 ├── cmd/                # CLI implementation using Cobra
 └── server/             # Backend server implementation
     ├── api/            # REST and gRPC API definitions
@@ -140,6 +140,18 @@ ps aux | grep "npm start" # Find the UI process
 ps aux | grep "bdc-cli admin dashboard" # Find the CLI dashboard process
 kill <PID> # Replace <PID> with the process ID you want to stop
 ```
+
+## UI Technology Stack
+
+The UI is built with:
+- React 18 with TypeScript
+- shadcn UI components (based on Radix UI primitives)
+- Tailwind CSS for styling
+- Redux Toolkit for state management
+- React Router for navigation
+- Lucide React for icons
+
+The UI supports both light and dark modes through a theme toggle.
 
 ## Contributing
 

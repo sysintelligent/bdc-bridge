@@ -34,7 +34,7 @@ func init() {
 	adminCmd.AddCommand(dashboardCmd)
 
 	// Here you will define your flags and configuration settings.
-	dashboardCmd.Flags().IntVarP(&port, "port", "p", 8080, "Port to run the dashboard server on")
+	dashboardCmd.Flags().IntVarP(&port, "port", "p", 8081, "Port to run the dashboard server on")
 	dashboardCmd.Flags().BoolVarP(&openBrowser, "open", "o", true, "Open the dashboard in the default browser")
 }
 
@@ -43,6 +43,8 @@ func startDashboard() {
 
 	addr := fmt.Sprintf("localhost:%d", port)
 	url := fmt.Sprintf("http://%s", addr)
+
+	fmt.Printf("Using port: %d\n", port) // Add debug line to confirm port value
 
 	// Get the current working directory
 	cwd, err := os.Getwd()
@@ -70,14 +72,10 @@ func startDashboard() {
 				fmt.Fprintf(w, "To see the actual UI, run 'cd ui && npm run build' first, then run this command again.")
 			})
 		} else {
-			// Found the UI build directory
-			fmt.Printf("Serving React UI from %s\n", uiBuildPath)
-			http.Handle("/", http.FileServer(http.Dir(uiBuildPath)))
+			setupFileServer(uiBuildPath)
 		}
 	} else {
-		// Found the UI build directory
-		fmt.Printf("Serving React UI from %s\n", uiBuildPath)
-		http.Handle("/", http.FileServer(http.Dir(uiBuildPath)))
+		setupFileServer(uiBuildPath)
 	}
 
 	// Start the server in a goroutine
@@ -97,6 +95,38 @@ func startDashboard() {
 
 	// Keep the main goroutine alive
 	select {}
+}
+
+// setupFileServer configures the HTTP handlers for serving the React SPA
+func setupFileServer(uiBuildPath string) {
+	fmt.Printf("Serving React UI from %s\n", uiBuildPath)
+
+	// Create a simple file server to serve all files from the build directory
+	fs := http.FileServer(http.Dir(uiBuildPath))
+
+	// Handle all requests
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// Add cache-control headers to prevent browser caching
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "0")
+
+		// Log the request path for debugging
+		fmt.Printf("Received request for: %s\n", r.URL.Path)
+
+		// Try to serve the file directly
+		filePath := filepath.Join(uiBuildPath, r.URL.Path)
+		_, err := os.Stat(filePath)
+
+		// If it's a static file that exists, serve it directly
+		if err == nil {
+			fs.ServeHTTP(w, r)
+			return
+		}
+
+		// For any path that doesn't exist as a file, serve index.html
+		http.ServeFile(w, r, filepath.Join(uiBuildPath, "index.html"))
+	})
 }
 
 // openURL opens the specified URL in the default browser
