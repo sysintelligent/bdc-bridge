@@ -153,6 +153,65 @@ The UI is built with:
 
 The UI supports both light and dark modes through a theme toggle.
 
+## UI Development and Deployment
+
+### Development Workflow
+
+For UI development, you can use the standard React development server:
+
+```bash
+cd ui
+npm install
+npm start
+```
+
+The UI will be available at http://localhost:3000
+
+### UI Rebuild and Deployment Process
+
+After making changes to UI components, you can use the automated deployment script to rebuild and update the production version:
+
+```bash
+# From the project root
+./deploy-ui.sh
+```
+
+This script:
+1. Navigates to the UI directory
+2. Builds the UI with production settings
+3. Copies the built files to the server's static directory
+4. Restarts the server if it's already running
+
+If you need to install dependencies along with deployment:
+
+```bash
+./deploy-ui.sh --install
+```
+
+The updated UI will be accessible at http://localhost:8080 after deployment.
+
+### Manually Rebuilding and Deploying UI
+
+If you prefer to manually control the process:
+
+1. Build the UI:
+   ```bash
+   cd ui
+   npm run build
+   ```
+
+2. The built files will be in the `ui/build` directory. Copy them to the server's static directory:
+   ```bash
+   mkdir -p ../server/static
+   cp -R build/* ../server/static/
+   ```
+
+3. Restart the server to see the changes:
+   ```bash
+   cd ../server
+   go run main.go
+   ```
+
 ## Contributing
 
 Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how to contribute to this project.

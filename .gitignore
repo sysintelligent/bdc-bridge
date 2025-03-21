@@ -39,6 +39,7 @@ Thumbs.db
 /bin/
 /dist/
 ui/build/
+server/static/
 cmd/bdc-cli/bdc-cli
 
 # Environment variables

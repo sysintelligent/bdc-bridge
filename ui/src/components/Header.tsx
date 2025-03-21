@@ -16,7 +16,7 @@ const Header: React.FC = () => {
           <span className="sr-only">Toggle menu</span>
         </Button>
         <div className="flex-1 text-lg font-semibold">
-          DMI CLI Dashboard
+          DMI CLI
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />

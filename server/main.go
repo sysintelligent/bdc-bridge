@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
@@ -80,6 +82,33 @@ func startHTTPServer(logger *log.Logger, k8sClient *kubernetes.Client, authServi
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "OK")
 	})
+
+	// Serve static files from the static directory
+	staticDir := "./static"
+	if _, err := os.Stat(staticDir); os.IsNotExist(err) {
+		logger.Printf("Static directory %s does not exist, UI will not be served", staticDir)
+	} else {
+		fs := http.FileServer(http.Dir(staticDir))
+		mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// If the file exists, serve it
+			path := staticDir + r.URL.Path
+			_, err := os.Stat(path)
+			if err == nil {
+				fs.ServeHTTP(w, r)
+				return
+			}
+
+			// For SPA routing, serve index.html for non-existent paths
+			// unless it's an API route or a file with extension
+			if !strings.HasPrefix(r.URL.Path, "/api/") && filepath.Ext(r.URL.Path) == "" {
+				http.ServeFile(w, r, staticDir+"/index.html")
+				return
+			}
+
+			fs.ServeHTTP(w, r)
+		}))
+		logger.Printf("Serving UI from %s", staticDir)
+	}
 
 	server := &http.Server{
 		Addr:    fmt.Sprintf(":%d", httpPort),
