@@ -21,10 +21,19 @@ fi
 
 # 3. Build the UI with production settings
 echo "Building UI for production..."
-npm run build:prod
-echo "✅ UI built and deployed to server/static"
+npm run build
+echo "✅ UI built successfully"
 
-# 4. Restart the server if running
+# 4. Ensure server/static directory exists
+mkdir -p ../server/static
+echo "✅ Ensured server/static directory exists"
+
+# 5. Copy build files to server/static
+echo "Copying build files to server/static..."
+cp -R build/* ../server/static/
+echo "✅ UI files copied to server/static"
+
+# 6. Restart the server if running
 if pgrep -f "go run.*server/main.go" > /dev/null; then
   echo "Restarting server..."
   pkill -f "go run.*server/main.go"
