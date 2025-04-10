@@ -1,24 +1,28 @@
+'use client'
+
 import * as React from "react"
-import { Link, LinkProps, useLocation } from "react-router-dom"
-import { cn } from "../../lib/utils"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { cn } from "@/lib/utils"
 import { buttonVariants } from "./button"
 import { LucideIcon } from "lucide-react"
 
-interface NavItemProps extends LinkProps {
+interface NavItemProps {
   className?: string
   children?: React.ReactNode
   icon?: LucideIcon
   isActive?: boolean
+  href: string
 }
 
 const NavItem = React.forwardRef<HTMLAnchorElement, NavItemProps>(
-  ({ className, children, icon: Icon, to, isActive, ...props }, ref) => {
-    const location = useLocation()
-    const active = isActive || location.pathname === to
+  ({ className, children, icon: Icon, href, isActive, ...props }, ref) => {
+    const pathname = usePathname()
+    const active = isActive || pathname === href
 
     return (
       <Link
-        to={to}
+        href={href}
         ref={ref}
         className={cn(
           buttonVariants({ variant: "ghost" }),

@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react';
 import { LayoutDashboard, AppWindow, Settings } from 'lucide-react';
 import { NavItem } from './ui/nav-item';
@@ -17,7 +19,7 @@ const Sidebar: React.FC = () => {
           {menuItems.map((item) => (
             <NavItem 
               key={item.text} 
-              to={item.path} 
+              href={item.path} 
               icon={item.icon}
             >
               {item.text}

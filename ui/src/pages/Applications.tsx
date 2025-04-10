@@ -1,7 +1,9 @@
+'use client'
+
 import React from 'react';
 import { Plus } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { useAppSelector } from '../hooks/redux';
+import { Button } from '@/components/ui/button';
+import { useAppSelector } from '@/hooks/redux';
 
 const Applications: React.FC = () => {
   const { applications, loading } = useAppSelector((state) => state.applications);

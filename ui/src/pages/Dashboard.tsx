@@ -1,5 +1,7 @@
+'use client'
+
 import React from 'react';
-import { useAppSelector } from '../hooks/redux';
+import { useAppSelector } from '@/hooks/redux';
 
 const Dashboard: React.FC = () => {
   const { applications } = useAppSelector((state) => state.applications);

@@ -6,14 +6,14 @@ A tool between developers and complex backend infrastructure., inspired by Argo 
 
 The project is organized into three main components:
 
-1. **UI**: A React-based front-end built with TypeScript and shadcn UI (powered by Tailwind CSS)
+1. **UI**: A Next.js-based front-end built with TypeScript and shadcn UI (powered by Tailwind CSS)
 2. **CMD**: A Go-based command-line interface using Cobra
 3. **Server**: A Go-based backend server with REST and gRPC endpoints
 
 ```
 bdc-bridge/
-├── ui/                 # React TypeScript frontend with shadcn UI
-├── cmd/                # CLI implementation using Cobra
+├── ui/                # React TypeScript frontend with shadcn UI
+├── cmd/               # CLI implementation using Cobra
 └── server/            # Backend server implementation
     ├── api/           # REST and gRPC API definitions
     ├── auth/          # Authentication and RBAC
@@ -44,15 +44,30 @@ The application uses the following ports:
 
 #### UI Development
 
-For UI development, you can use the standard React development server:
+For UI development, you can use the Next.js development server:
 
 ```bash
 cd ui
 npm install
-npm start
+npm run dev
 ```
 
 The UI development server will be available at http://localhost:3000
+
+The UI is built with:
+- Next.js 14 with App Router
+- TypeScript
+- shadcn UI components
+- Tailwind CSS for styling
+- Redux Toolkit for state management
+
+Key features:
+- Server-side rendering capabilities
+- API routes support
+- Built-in routing system
+- Automatic code splitting
+- Image optimization
+- TypeScript support out of the box
 
 #### Building and Deploying UI
 
@@ -64,7 +79,7 @@ To build and deploy the UI to the server:
 ```
 
 This script:
-1. Builds the UI with production settings
+1. Builds the Next.js application with production settings
 2. Copies the built files to server/static directory
 3. Restarts the server if it's already running
 

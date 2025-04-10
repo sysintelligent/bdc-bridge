@@ -1,9 +1,12 @@
+'use client'
+
 import React from 'react';
 import { Button } from './ui/button';
 import { Menu, User } from 'lucide-react';
-import { useAppSelector } from '../hooks/redux';
+import { useAppSelector } from '@/hooks/redux';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { ThemeToggle } from './theme-toggle';
+import Link from 'next/link';
 
 const Header: React.FC = () => {
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
@@ -15,9 +18,9 @@ const Header: React.FC = () => {
           <Menu className="h-5 w-5" />
           <span className="sr-only">Toggle menu</span>
         </Button>
-        <div className="flex-1 text-lg font-semibold">
+        <Link href="/" className="flex-1 text-lg font-semibold">
           DMI CLI
-        </div>
+        </Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />
           {isAuthenticated ? (

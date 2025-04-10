@@ -1,5 +1,7 @@
+'use client'
+
 import React, { useState } from 'react';
-import { Button } from '../components/ui/button';
+import { Button } from '@/components/ui/button';
 
 const Settings: React.FC = () => {
   const [settings, setSettings] = useState({
