@@ -3,7 +3,7 @@
 import React from 'react';
 import { useAppSelector } from '@/hooks/redux';
 
-const Dashboard: React.FC = () => {
+export default function DashboardPage() {
   const { applications } = useAppSelector((state) => state.applications);
 
   // Calculate summary statistics
@@ -46,6 +46,4 @@ const Dashboard: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default Dashboard; 
+} 

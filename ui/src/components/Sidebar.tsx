@@ -6,7 +6,7 @@ import { NavItem } from './ui/nav-item';
 
 const Sidebar: React.FC = () => {
   const menuItems = [
-    { text: 'Dashboard', icon: LayoutDashboard, path: '/' },
+    { text: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { text: 'Applications', icon: AppWindow, path: '/applications' },
     { text: 'Settings', icon: Settings, path: '/settings' },
   ];

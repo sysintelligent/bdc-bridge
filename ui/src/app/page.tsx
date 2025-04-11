@@ -1,12 +1,5 @@
-'use client'
-
-import { App } from '@/components/App'
-import Dashboard from '@/pages/Dashboard'
+import { redirect } from 'next/navigation'
 
 export default function Home() {
-  return (
-    <App>
-      <Dashboard />
-    </App>
-  )
+  redirect('/dashboard')
 } 
