@@ -2,6 +2,33 @@
 
 A tool between developers and complex backend infrastructure., inspired by Argo CD. It gives developers the edge they need to succeed while simplifying the platform complexities.
 
+## Table of Contents
+
+1. [Project Structure](#project-structure)
+2. [Ports Used](#ports-used)
+3. [Development Setup](#development-setup)
+   - [Prerequisites](#prerequisites)
+   - [Building and Running](#building-and-running)
+     - [UI Development](#ui-development)
+     - [Building and Deploying UI](#building-and-deploying-ui)
+     - [Server](#server)
+     - [CLI](#cli)
+4. [Local Testing Setup](#local-testing-setup)
+   - [Build and Deploy the UI](#1-build-and-deploy-the-ui)
+   - [Start the Server](#2-start-the-server)
+   - [Use the CLI](#3-use-the-cli)
+   - [Testing the API](#testing-the-api)
+   - [Authentication](#authentication)
+   - [Stopping the Services](#stopping-the-services)
+5. [UI Technology Stack](#ui-technology-stack)
+6. [App Router Configuration and Development](#app-router-configuration-and-development)
+   - [Starting Page and Routing](#starting-page-and-routing)
+   - [Adding New Routes](#adding-new-routes)
+   - [Creating New UI Components](#creating-new-ui-components)
+   - [Best Practices](#best-practices)
+7. [Contributing](#contributing)
+8. [License](#license)
+
 ## Project Structure
 
 The project is organized into three main components:
@@ -12,7 +39,10 @@ The project is organized into three main components:
 
 ```
 bdc-bridge/
-├── ui/                # React TypeScript frontend with shadcn UI
+├── ui/                # Next.js TypeScript frontend with shadcn UI
+│   ├── app/           # Next.js App Router pages and layouts
+│   ├── components/    # Reusable UI components
+│   └── lib/           # Utility functions and shared code
 ├── cmd/               # CLI implementation using Cobra
 └── server/            # Backend server implementation
     ├── api/           # REST and gRPC API definitions
@@ -29,14 +59,15 @@ The application uses the following ports:
 |--------------|-------|----------|-------------------------|-----------------------------------|
 | Server (HTTP) | 8080  | HTTP     | http://localhost:8080   | REST API and UI                  |
 | Server (gRPC) | 9090  | gRPC     | localhost:9090          | gRPC API                         |
+| UI Dev Server | 3000  | HTTP     | http://localhost:3000   | Next.js development server       |
 
 ## Development Setup
 
 ### Prerequisites
 
 - Go 1.19+
-- Node.js 16+
-- npm 8+
+- Node.js 18+ (recommended for Next.js 14)
+- npm 9+ or yarn
 - Docker (optional, for containerized development)
 - Minikube v1.32+ or equivalent local Kubernetes cluster
 
@@ -62,12 +93,15 @@ The UI is built with:
 - Redux Toolkit for state management
 
 Key features:
-- Server-side rendering capabilities
+- Server-side rendering (SSR) and static site generation (SSG)
+- App Router for improved routing and layouts
 - API routes support
 - Built-in routing system
 - Automatic code splitting
 - Image optimization
 - TypeScript support out of the box
+- Server Components for improved performance
+- Streaming and Suspense for better loading states
 
 #### Building and Deploying UI
 
@@ -181,14 +215,146 @@ kill <PID> # Replace <PID> with the process ID you want to stop
 ## UI Technology Stack
 
 The UI is built with:
-- React 18 with TypeScript
+- Next.js 14 with App Router
+- TypeScript
 - shadcn UI components (based on Radix UI primitives)
 - Tailwind CSS for styling
 - Redux Toolkit for state management
-- React Router for navigation
+- Server Components and Client Components
+- React Server Components for improved performance
+- Streaming and Suspense for better loading states
+- Built-in routing with App Router
+- API Routes for backend functionality
 - Lucide React for icons
 
-The UI supports both light and dark modes through a theme toggle.
+The UI supports both light and dark modes through a theme toggle and uses Next.js's built-in features for:
+- Server-side rendering
+- Static site generation
+- Incremental static regeneration
+- API routes
+- Image optimization
+- Font optimization
+- Script optimization
+
+## App Router Configuration and Development
+
+### Starting Page and Routing
+
+The application uses Next.js App Router for routing. The main entry points are:
+
+```
+ui/
+├── app/
+│   ├── page.tsx           # Home page (/)
+│   ├── layout.tsx         # Root layout
+│   ├── dashboard/         # Dashboard routes
+│   │   ├── page.tsx      # /dashboard
+│   │   └── [id]/         # Dynamic routes
+│   │       └── page.tsx  # /dashboard/[id]
+│   └── settings/         # Settings routes
+│       └── page.tsx      # /settings
+```
+
+The starting page (`/`) is defined in `app/page.tsx`. The root layout in `app/layout.tsx` provides the common structure for all pages.
+
+### Adding New Routes
+
+To add a new route:
+
+1. Create a new directory in `app/` for your route
+2. Add a `page.tsx` file inside the directory
+3. The route will be automatically available based on the directory structure
+
+Example for adding a new route `/applications`:
+
+```bash
+mkdir -p ui/app/applications
+touch ui/app/applications/page.tsx
+```
+
+### Creating New UI Components
+
+To add a new UI component:
+
+1. Create the component file in the appropriate directory:
+   ```bash
+   # For shared components
+   touch ui/components/ui/your-component.tsx
+   
+   # For page-specific components
+   touch ui/app/your-page/your-component.tsx
+   ```
+
+2. Basic component template:
+   ```tsx
+   // ui/components/ui/your-component.tsx
+   'use client'  // Add this if the component needs client-side interactivity
+   
+   import { FC } from 'react'
+   
+   interface YourComponentProps {
+     // Define your props here
+   }
+   
+   export const YourComponent: FC<YourComponentProps> = ({ /* props */ }) => {
+     return (
+       // Your component JSX
+     )
+   }
+   ```
+
+3. For server components (default in App Router):
+   - Omit the 'use client' directive
+   - Use async/await for data fetching
+   - Can't use hooks or browser APIs
+
+4. For client components:
+   - Add 'use client' directive at the top
+   - Can use hooks and browser APIs
+   - Use for interactive elements
+
+### Best Practices
+
+1. **Component Organization**:
+   - Place shared components in `components/ui/`
+   - Place page-specific components in their respective page directories
+   - Use the `lib/` directory for utilities and helpers
+
+2. **Data Fetching**:
+   - Use Server Components for data fetching when possible
+   - Implement loading states using Suspense
+   - Handle errors with error boundaries
+
+3. **State Management**:
+   - Use React Context for theme and global state
+   - Use Redux Toolkit for complex state management
+   - Consider using React Query for server state
+
+4. **Styling**:
+   - Use Tailwind CSS for styling
+   - Follow the shadcn UI component patterns
+   - Maintain consistent spacing and typography
+
+Example of a complete page with components:
+
+```tsx
+// ui/app/dashboard/page.tsx
+import { Suspense } from 'react'
+import { DashboardHeader } from './components/dashboard-header'
+import { DashboardContent } from './components/dashboard-content'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
+
+export default async function DashboardPage() {
+  return (
+    <div className="container mx-auto p-4">
+      <DashboardHeader />
+      <Suspense fallback={<LoadingSpinner />}>
+        <DashboardContent />
+      </Suspense>
+    </div>
+  )
+}
+```
 
 ## Contributing
 
