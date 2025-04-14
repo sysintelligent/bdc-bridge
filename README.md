@@ -245,9 +245,9 @@ The application uses Next.js App Router for routing. The main entry points are:
 ```
 ui/
 ├── app/
-│   ├── page.tsx           # Home page (/)
-│   ├── layout.tsx         # Root layout
-│   ├── dashboard/         # Dashboard routes
+│   ├── page.tsx          # Home page (/)
+│   ├── layout.tsx        # Root layout
+│   ├── dashboard/        # Dashboard routes
 │   │   ├── page.tsx      # /dashboard
 │   │   └── [id]/         # Dynamic routes
 │   │       └── page.tsx  # /dashboard/[id]
