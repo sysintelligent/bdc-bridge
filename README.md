@@ -10,6 +10,7 @@ A tool between developers and complex backend infrastructure., inspired by Argo 
    - [Prerequisites](#prerequisites)
    - [Building and Running](#building-and-running)
      - [UI Development](#ui-development)
+     - [Integrating v0.dev Designs](#integrating-v0dev-designs)
      - [Building and Deploying UI](#building-and-deploying-ui)
      - [Server](#server)
      - [CLI](#cli)
@@ -85,23 +86,59 @@ npm run dev
 
 The UI development server will be available at http://localhost:3000
 
+#### Integrating v0.dev Designs
+
+To integrate designs from v0.dev into the codebase:
+
+1. Install the shadcn/ui components (if not already installed):
+   ```bash
+   npx shadcn-ui@latest add
+   ```
+
+2. For each component from v0.dev:
+   - Copy the component code from v0.dev
+   - Create a new component file in the appropriate directory (e.g., `ui/components/ui/`)
+   - Paste and adjust the code as needed
+   - Make sure all required shadcn/ui components are installed:
+     ```bash
+     npx shadcn-ui@latest add [component-name]
+     ```
+   - Import and use the component in your pages
+
+3. Common shadcn/ui components you might need to install:
+   ```bash
+   npx shadcn-ui@latest add button
+   npx shadcn-ui@latest add card
+   npx shadcn-ui@latest add input
+   npx shadcn-ui@latest add dialog
+   ```
+
+4. For styling consistency:
+   - Use the existing color scheme and theme variables
+   - Follow the Tailwind CSS class naming conventions
+   - Maintain the component structure from v0.dev
+
 The UI is built with:
 - Next.js 14 with App Router
 - TypeScript
 - shadcn UI components
 - Tailwind CSS for styling
 - Redux Toolkit for state management
-
-Key features:
-- Server-side rendering (SSR) and static site generation (SSG)
-- App Router for improved routing and layouts
-- API routes support
-- Built-in routing system
-- Automatic code splitting
-- Image optimization
-- TypeScript support out of the box
-- Server Components for improved performance
+- Server Components and Client Components
+- React Server Components for improved performance
 - Streaming and Suspense for better loading states
+- Built-in routing with App Router
+- API Routes for backend functionality
+- Lucide React for icons
+
+The UI supports both light and dark modes through a theme toggle and uses Next.js's built-in features for:
+- Server-side rendering
+- Static site generation
+- Incremental static regeneration
+- API routes
+- Image optimization
+- Font optimization
+- Script optimization
 
 #### Building and Deploying UI
 
