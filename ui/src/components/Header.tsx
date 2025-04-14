@@ -19,7 +19,7 @@ const Header: React.FC = () => {
           <span className="sr-only">Toggle menu</span>
         </Button>
         <Link href="/" className="flex-1 text-lg font-semibold">
-          DMI CLI
+          BDC Bridge
         </Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />
