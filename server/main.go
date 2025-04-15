@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"path/filepath"
-	"strings"
 	"syscall"
 	"time"
 
@@ -82,60 +80,6 @@ func startHTTPServer(logger *log.Logger, k8sClient *kubernetes.Client, authServi
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "OK")
 	})
-
-	// Serve static files from the static directory
-	staticDir := "./static"
-	if _, err := os.Stat(staticDir); os.IsNotExist(err) {
-		logger.Printf("Static directory %s does not exist, UI will not be served", staticDir)
-	} else {
-		fs := http.FileServer(http.Dir(staticDir))
-		mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			logger.Printf("Serving request for path: %s", r.URL.Path)
-
-			// Skip API routes
-			if strings.HasPrefix(r.URL.Path, "/api/") {
-				http.NotFound(w, r)
-				return
-			}
-
-			// Handle Next.js static files
-			if strings.HasPrefix(r.URL.Path, "/_next/") {
-				// Try to serve from _next directory first
-				path := filepath.Join(staticDir, r.URL.Path)
-				if _, err := os.Stat(path); err == nil {
-					fs.ServeHTTP(w, r)
-					return
-				}
-
-				// Try to serve from .next directory if not found in _next
-				path = filepath.Join(staticDir, ".next", strings.TrimPrefix(r.URL.Path, "/_next/"))
-				if _, err := os.Stat(path); err == nil {
-					http.ServeFile(w, r, path)
-					return
-				}
-			}
-
-			// Try to serve static files from public directory
-			if r.URL.Path != "/" {
-				publicPath := filepath.Join(staticDir, r.URL.Path)
-				if _, err := os.Stat(publicPath); err == nil {
-					fs.ServeHTTP(w, r)
-					return
-				}
-			}
-
-			// For all other paths, serve index.html
-			indexPath := filepath.Join(staticDir, "index.html")
-			if _, err := os.Stat(indexPath); err == nil {
-				http.ServeFile(w, r, indexPath)
-				return
-			}
-
-			// If index.html doesn't exist, return 404
-			http.NotFound(w, r)
-		}))
-		logger.Printf("Serving UI from %s", staticDir)
-	}
 
 	server := &http.Server{
 		Addr:    fmt.Sprintf(":%d", httpPort),

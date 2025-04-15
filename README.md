@@ -5,62 +5,57 @@ A tool between developers and complex backend infrastructure., inspired by Argo 
 ## Table of Contents
 
 1. [Project Structure](#project-structure)
-2. [Ports Used](#ports-used)
+2. [Architecture](#architecture)
 3. [Development Setup](#development-setup)
    - [Prerequisites](#prerequisites)
    - [Building and Running](#building-and-running)
-     - [UI Development](#ui-development)
-     - [Integrating v0.dev Designs](#integrating-v0dev-designs)
-     - [Building and Deploying UI](#building-and-deploying-ui)
-     - [Server](#server)
+     - [Backend Server](#backend-server)
+     - [Frontend Development](#frontend-development)
      - [CLI](#cli)
-4. [Local Testing Setup](#local-testing-setup)
-   - [Build and Deploy the UI](#1-build-and-deploy-the-ui)
-   - [Start the Server](#2-start-the-server)
-   - [Use the CLI](#3-use-the-cli)
-   - [Testing the API](#testing-the-api)
-   - [Authentication](#authentication)
-   - [Stopping the Services](#stopping-the-services)
-5. [UI Technology Stack](#ui-technology-stack)
-6. [App Router Configuration and Development](#app-router-configuration-and-development)
-   - [Starting Page and Routing](#starting-page-and-routing)
-   - [Adding New Routes](#adding-new-routes)
-   - [Creating New UI Components](#creating-new-ui-components)
-   - [Best Practices](#best-practices)
-7. [Contributing](#contributing)
-8. [License](#license)
+4. [API Documentation](#api-documentation)
+5. [Authentication](#authentication)
+6. [Contributing](#contributing)
 
 ## Project Structure
 
 The project is organized into three main components:
 
-1. **UI**: A Next.js-based front-end built with TypeScript and shadcn UI (powered by Tailwind CSS)
-2. **CMD**: A Go-based command-line interface using Cobra
-3. **Server**: A Go-based backend server with REST and gRPC endpoints
-
 ```
 bdc-bridge/
-├── ui/                # Next.js TypeScript frontend with shadcn UI
-│   ├── app/           # Next.js App Router pages and layouts
-│   ├── components/    # Reusable UI components
-│   └── lib/           # Utility functions and shared code
-├── cmd/               # CLI implementation using Cobra
-└── server/            # Backend server implementation
-    ├── api/           # REST and gRPC API definitions
-    ├── auth/          # Authentication and RBAC
-    ├── kubernetes/    # Kubernetes client integration
-    └── static/        # Built UI files served by the server
+├── ui/               # Next.js TypeScript frontend with shadcn UI
+│   ├── app/          # Next.js App Router pages and layouts
+│   ├── components/   # Reusable UI components
+│   └── lib/          # Utility functions and shared code
+├── server/           # Go backend server
+│   ├── api/          # REST and gRPC API definitions
+│   ├── auth/         # Authentication and RBAC
+│   └── kubernetes/   # Kubernetes client integration
+└── cmd/              # CLI implementation using Cobra
+    └── bdc-cli/      # CLI source code
 ```
 
-## Ports Used
+## Architecture
 
-The application uses the following ports:
+BDC Bridge uses a modern, microservices-based architecture:
 
-| Component     | Port  | Protocol | URL                     | Description                       |
-|--------------|-------|----------|-------------------------|-----------------------------------|
-| Server (HTTP) | 8080  | HTTP     | http://localhost:8080   | REST API and UI                  |
-| Server (gRPC) | 9090  | gRPC     | localhost:9090          | gRPC API                         |
-| UI Dev Server | 3000  | HTTP     | http://localhost:3000   | Next.js development server       |
+1. **Backend Server (Go)**
+   - REST API on port 8080
+   - gRPC API on port 9090
+   - Handles Kubernetes communication
+   - Manages authentication and authorization
+   - Provides API endpoints for frontend and CLI
+
+2. **Frontend (Next.js)**
+   - Runs on port 3000
+   - Modern React-based dashboard
+   - Communicates with backend via API
+   - Supports both light and dark themes
+   - Built with shadcn UI components
+
+3. **CLI (Go)**
+   - Command-line interface for BDC Bridge
+   - Integrates with both backend and frontend
+   - Provides dashboard access via browser
 
 ## Development Setup
 
@@ -69,334 +64,95 @@ The application uses the following ports:
 - Go 1.19+
 - Node.js 18+ (recommended for Next.js 14)
 - npm 9+ or yarn
-- Docker (optional, for containerized development)
-- Minikube v1.32+ or equivalent local Kubernetes cluster
+- Kubernetes cluster or minikube
 
 ### Building and Running
 
-#### UI Development
+#### Backend Server
 
-For UI development, you can use the Next.js development server:
+1. Start the Go backend server:
+```bash
+cd server
+go mod tidy
+go run main.go
+```
 
+The server will start on:
+- HTTP API: http://localhost:8080
+- gRPC: localhost:9090
+
+#### Frontend Development
+
+1. Install dependencies:
 ```bash
 cd ui
 npm install
+```
+
+2. Start the development server:
+```bash
 npm run dev
 ```
 
-The UI development server will be available at http://localhost:3000
-
-#### Integrating v0.dev Designs
-
-To integrate designs from v0.dev into the codebase:
-
-1. Install the shadcn/ui components (if not already installed):
-   ```bash
-   npx shadcn-ui@latest add
-   ```
-
-2. For each component from v0.dev:
-   - Copy the component code from v0.dev
-   - Create a new component file in the appropriate directory (e.g., `ui/components/ui/`)
-   - Paste and adjust the code as needed
-   - Make sure all required shadcn/ui components are installed:
-     ```bash
-     npx shadcn-ui@latest add [component-name]
-     ```
-   - Import and use the component in your pages
-
-3. Common shadcn/ui components you might need to install:
-   ```bash
-   npx shadcn-ui@latest add button
-   npx shadcn-ui@latest add card
-   npx shadcn-ui@latest add input
-   npx shadcn-ui@latest add dialog
-   ```
-
-4. For styling consistency:
-   - Use the existing color scheme and theme variables
-   - Follow the Tailwind CSS class naming conventions
-   - Maintain the component structure from v0.dev
-
-The UI is built with:
-- Next.js 14 with App Router
-- TypeScript
-- shadcn UI components
-- Tailwind CSS for styling
-- Redux Toolkit for state management
-- Server Components and Client Components
-- React Server Components for improved performance
-- Streaming and Suspense for better loading states
-- Built-in routing with App Router
-- API Routes for backend functionality
-- Lucide React for icons
-
-The UI supports both light and dark modes through a theme toggle and uses Next.js's built-in features for:
-- Server-side rendering
-- Static site generation
-- Incremental static regeneration
-- API routes
-- Image optimization
-- Font optimization
-- Script optimization
-
-#### Building and Deploying UI
-
-To build and deploy the UI to the server:
-
-```bash
-# From the project root
-./deploy-ui.sh
-```
-
-This script:
-1. Builds the Next.js application with production settings
-2. Copies the built files to server/static directory
-3. Restarts the server if it's already running
-
-If you need to install dependencies along with deployment:
-
-```bash
-./deploy-ui.sh --install
-```
-
-#### Server
-
-```bash
-cd server
-go mod tidy
-go run main.go
-```
-
-The server will start and listen on:
-- HTTP (UI & API): http://localhost:8080
-- gRPC: localhost:9090
+The UI will be available at http://localhost:3000
 
 #### CLI
 
+1. Build the CLI:
 ```bash
 cd cmd/bdc-cli
 go build -o bdc-cli
 ```
 
-To open the dashboard in your browser:
+2. Open the dashboard:
 ```bash
 ./bdc-cli admin dashboard
 ```
 
-## Local Testing Setup
+This will start the Next.js server if not running and open the dashboard in your browser.
 
-To test the complete application locally:
+## API Documentation
 
-### 1. Build and Deploy the UI
+The backend provides the following API endpoints:
 
-```bash
-# From the project root
-./deploy-ui.sh
-```
+### REST API (Port 8080)
 
-### 2. Start the Server
+- `GET /health` - Health check endpoint
+- `GET /api/applications` - List all applications
+- `GET /api/applications/{name}` - Get application details
+- `POST /api/applications` - Create new application
+- `PUT /api/applications/{name}` - Update application
+- `DELETE /api/applications/{name}` - Delete application
+- `GET /api/settings` - Get settings
+- `PUT /api/settings` - Update settings
 
-```bash
-cd server
-go mod tidy
-go run main.go
-```
+### gRPC API (Port 9090)
 
-The server will start and be available at:
-- http://localhost:8080 (UI and HTTP API)
-- localhost:9090 (gRPC)
+- ApplicationService
+  - GetApplications
+  - GetApplication
+  - CreateApplication
+  - UpdateApplication
+  - DeleteApplication
 
-### 3. Use the CLI
+## Authentication
 
-```bash
-cd cmd/bdc-cli
-go build -o bdc-cli
-# Open the dashboard in your browser
-./bdc-cli admin dashboard
-```
+The server supports two types of authentication tokens:
 
-### Testing the API
+1. **Admin Token**
+   - Full access to all endpoints
+   - Token: `admin-token`
+   - Example: `curl -H "Authorization: Bearer admin-token" http://localhost:8080/api/applications`
 
-You can test the server's REST API using curl:
-
-```bash
-# Get all applications (admin access)
-curl -H "Authorization: Bearer admin-token" http://localhost:8080/api/applications
-
-# Get a specific application
-curl -H "Authorization: Bearer admin-token" http://localhost:8080/api/applications/frontend
-
-# Check server health
-curl http://localhost:8080/health
-
-# Test with regular user token (limited permissions)
-curl -H "Authorization: Bearer demo-token" http://localhost:8080/api/applications
-```
-
-### Authentication
-
-The server supports two test tokens:
-- `admin-token`: Full access to all endpoints
-- `demo-token`: Read-only access to applications and settings
-
-### Stopping the Services
-
-When you're done testing, you can stop the services by pressing Ctrl+C in each terminal window, or by finding and killing the processes:
-
-```bash
-ps aux | grep "go run" # Find the server process
-kill <PID> # Replace <PID> with the process ID you want to stop
-```
-
-## UI Technology Stack
-
-The UI is built with:
-- Next.js 14 with App Router
-- TypeScript
-- shadcn UI components (based on Radix UI primitives)
-- Tailwind CSS for styling
-- Redux Toolkit for state management
-- Server Components and Client Components
-- React Server Components for improved performance
-- Streaming and Suspense for better loading states
-- Built-in routing with App Router
-- API Routes for backend functionality
-- Lucide React for icons
-
-The UI supports both light and dark modes through a theme toggle and uses Next.js's built-in features for:
-- Server-side rendering
-- Static site generation
-- Incremental static regeneration
-- API routes
-- Image optimization
-- Font optimization
-- Script optimization
-
-## App Router Configuration and Development
-
-### Starting Page and Routing
-
-The application uses Next.js App Router for routing. The main entry points are:
-
-```
-ui/
-├── app/
-│   ├── page.tsx          # Home page (/)
-│   ├── layout.tsx        # Root layout
-│   ├── dashboard/        # Dashboard routes
-│   │   ├── page.tsx      # /dashboard
-│   │   └── [id]/         # Dynamic routes
-│   │       └── page.tsx  # /dashboard/[id]
-│   └── settings/         # Settings routes
-│       └── page.tsx      # /settings
-```
-
-The starting page (`/`) is defined in `app/page.tsx`. The root layout in `app/layout.tsx` provides the common structure for all pages.
-
-### Adding New Routes
-
-To add a new route:
-
-1. Create a new directory in `app/` for your route
-2. Add a `page.tsx` file inside the directory
-3. The route will be automatically available based on the directory structure
-
-Example for adding a new route `/applications`:
-
-```bash
-mkdir -p ui/app/applications
-touch ui/app/applications/page.tsx
-```
-
-### Creating New UI Components
-
-To add a new UI component:
-
-1. Create the component file in the appropriate directory:
-   ```bash
-   # For shared components
-   touch ui/components/ui/your-component.tsx
-   
-   # For page-specific components
-   touch ui/app/your-page/your-component.tsx
-   ```
-
-2. Basic component template:
-   ```tsx
-   // ui/components/ui/your-component.tsx
-   'use client'  // Add this if the component needs client-side interactivity
-   
-   import { FC } from 'react'
-   
-   interface YourComponentProps {
-     // Define your props here
-   }
-   
-   export const YourComponent: FC<YourComponentProps> = ({ /* props */ }) => {
-     return (
-       // Your component JSX
-     )
-   }
-   ```
-
-3. For server components (default in App Router):
-   - Omit the 'use client' directive
-   - Use async/await for data fetching
-   - Can't use hooks or browser APIs
-
-4. For client components:
-   - Add 'use client' directive at the top
-   - Can use hooks and browser APIs
-   - Use for interactive elements
-
-### Best Practices
-
-1. **Component Organization**:
-   - Place shared components in `components/ui/`
-   - Place page-specific components in their respective page directories
-   - Use the `lib/` directory for utilities and helpers
-
-2. **Data Fetching**:
-   - Use Server Components for data fetching when possible
-   - Implement loading states using Suspense
-   - Handle errors with error boundaries
-
-3. **State Management**:
-   - Use React Context for theme and global state
-   - Use Redux Toolkit for complex state management
-   - Consider using React Query for server state
-
-4. **Styling**:
-   - Use Tailwind CSS for styling
-   - Follow the shadcn UI component patterns
-   - Maintain consistent spacing and typography
-
-Example of a complete page with components:
-
-```tsx
-// ui/app/dashboard/page.tsx
-import { Suspense } from 'react'
-import { DashboardHeader } from './components/dashboard-header'
-import { DashboardContent } from './components/dashboard-content'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
-
-export default async function DashboardPage() {
-  return (
-    <div className="container mx-auto p-4">
-      <DashboardHeader />
-      <Suspense fallback={<LoadingSpinner />}>
-        <DashboardContent />
-      </Suspense>
-    </div>
-  )
-}
-```
+2. **Demo Token**
+   - Read-only access to applications and settings
+   - Token: `demo-token`
+   - Example: `curl -H "Authorization: Bearer demo-token" http://localhost:8080/api/applications`
 
 ## Contributing
 
-Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how to contribute to this project.
-
-## License
-
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details. 
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a new Pull Request 
