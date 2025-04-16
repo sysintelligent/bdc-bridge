@@ -12,9 +12,10 @@ A tool between developers and complex backend infrastructure., inspired by Argo 
      - [Backend Server](#backend-server)
      - [Frontend Development](#frontend-development)
      - [CLI](#cli)
-4. [API Documentation](#api-documentation)
-5. [Authentication](#authentication)
-6. [Contributing](#contributing)
+4. [Features](#features)
+5. [API Documentation](#api-documentation)
+6. [Authentication](#authentication)
+7. [Contributing](#contributing)
 
 ## Project Structure
 
@@ -27,7 +28,7 @@ bdc-bridge/
 │   │   ├── app/          # Next.js App Router pages and layouts
 │   │   ├── components/   # Reusable UI components
 │   │   ├── lib/          # Utility functions and shared code
-│   │   └── globals.css   # Global styles
+│   │   └── globals.css   # Global styles and Tailwind configuration
 │   ├── public/           # Static assets
 │   └── scripts/          # Build and utility scripts
 ├── server/               # Go backend server
@@ -43,6 +44,17 @@ The UI structure follows modern Next.js best practices with a dedicated `src` di
 - Minimal and focused component structure
 - Clear separation of concerns between different parts of the application
 - Scalable architecture for adding new features
+- Modern styling with Tailwind CSS and CSS variables for theming
+
+## Features
+
+### Modern UI
+- Clean and minimalist design
+- Responsive layout
+- Dark mode support
+- Customizable theme using CSS variables
+- Component-based architecture using React and Next.js
+- Type-safe development with TypeScript
 
 ## Architecture
 
