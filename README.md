@@ -22,15 +22,11 @@ The project is organized into three main components:
 
 ```
 bdc-bridge/
-├── ui/                   # Next.js TypeScript frontend with shadcn UI
+├── ui/                   # Next.js TypeScript frontend
 │   ├── src/              # Source code directory
 │   │   ├── app/          # Next.js App Router pages and layouts
 │   │   ├── components/   # Reusable UI components
-│   │   ├── features/     # Feature-specific code and logic
-│   │   ├── hooks/        # Custom React hooks
 │   │   ├── lib/          # Utility functions and shared code
-│   │   ├── store.ts      # State management
-│   │   ├── middleware.ts # Next.js middleware
 │   │   └── globals.css   # Global styles
 │   ├── public/           # Static assets
 │   └── scripts/          # Build and utility scripts
@@ -44,9 +40,8 @@ bdc-bridge/
 
 The UI structure follows modern Next.js best practices with a dedicated `src` directory that provides:
 - Clean separation between source code and configuration files
-- Well-organized component and feature structure
+- Minimal and focused component structure
 - Clear separation of concerns between different parts of the application
-- Easy-to-maintain state management and middleware
 - Scalable architecture for adding new features
 
 ## Architecture
@@ -62,10 +57,10 @@ BDC Bridge uses a modern, microservices-based architecture:
 
 2. **Frontend (Next.js)**
    - Runs on port 3000
-   - Modern React-based dashboard
+   - Modern React-based application
    - Communicates with backend via API
-   - Supports both light and dark themes
-   - Built with shadcn UI components
+   - Built with Next.js App Router
+   - Styled with Tailwind CSS
 
 3. **CLI (Go)**
    - Command-line interface for BDC Bridge
