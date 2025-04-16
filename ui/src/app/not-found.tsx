@@ -2,7 +2,6 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 
 export default function NotFound() {
   return (
@@ -11,7 +10,9 @@ export default function NotFound() {
       <p className="text-xl">Page not found</p>
       <p className="text-muted-foreground">The page you're looking for doesn't exist.</p>
       <Link href="/">
-        <Button>Go back home</Button>
+        <button className="rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
+          Go back home
+        </button>
       </Link>
     </div>
   )
