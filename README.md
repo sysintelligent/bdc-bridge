@@ -96,6 +96,28 @@ npm run dev
 
 The UI will be available at http://localhost:3000
 
+#### Importing Components from v0.dev
+
+To import components from v0.dev into your project:
+
+1. Navigate to the UI directory:
+```bash
+cd ui
+```
+
+2. Run the shadcn command with your v0.dev component URL:
+```bash
+npx shadcn@2.3.0 add "your-v0-dev-component-url"
+```
+
+This will:
+- Download the component code from v0.dev
+- Add any necessary shadcn-ui component dependencies
+- Create the component file in your project
+- Add required imports and styles
+
+After importing, you can use the component in your pages or components. You may need to restart your development server after adding new components.
+
 #### CLI
 
 1. Build the CLI:
