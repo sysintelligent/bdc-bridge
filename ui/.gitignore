@@ -5,4 +5,5 @@
 # Next.js
 .next/
 out/
-build/ 
+build/
+next-env.d.ts 
