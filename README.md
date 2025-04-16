@@ -22,17 +22,32 @@ The project is organized into three main components:
 
 ```
 bdc-bridge/
-├── ui/               # Next.js TypeScript frontend with shadcn UI
-│   ├── app/          # Next.js App Router pages and layouts
-│   ├── components/   # Reusable UI components
-│   └── lib/          # Utility functions and shared code
-├── server/           # Go backend server
-│   ├── api/          # REST and gRPC API definitions
-│   ├── auth/         # Authentication and RBAC
-│   └── kubernetes/   # Kubernetes client integration
-└── cmd/              # CLI implementation using Cobra
-    └── bdc-cli/      # CLI source code
+├── ui/                   # Next.js TypeScript frontend with shadcn UI
+│   ├── src/              # Source code directory
+│   │   ├── app/          # Next.js App Router pages and layouts
+│   │   ├── components/   # Reusable UI components
+│   │   ├── features/     # Feature-specific code and logic
+│   │   ├── hooks/        # Custom React hooks
+│   │   ├── lib/          # Utility functions and shared code
+│   │   ├── store.ts      # State management
+│   │   ├── middleware.ts # Next.js middleware
+│   │   └── globals.css   # Global styles
+│   ├── public/           # Static assets
+│   └── scripts/          # Build and utility scripts
+├── server/               # Go backend server
+│   ├── api/              # REST and gRPC API definitions
+│   ├── auth/             # Authentication and RBAC
+│   └── kubernetes/       # Kubernetes client integration
+└── cmd/                  # CLI implementation using Cobra
+    └── bdc-cli/          # CLI source code
 ```
+
+The UI structure follows modern Next.js best practices with a dedicated `src` directory that provides:
+- Clean separation between source code and configuration files
+- Well-organized component and feature structure
+- Clear separation of concerns between different parts of the application
+- Easy-to-maintain state management and middleware
+- Scalable architecture for adding new features
 
 ## Architecture
 
