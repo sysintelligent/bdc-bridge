@@ -37,6 +37,9 @@ bdc-bridge/
 │   └── kubernetes/       # Kubernetes client integration
 └── cmd/                  # CLI implementation using Cobra
     └── bdc-cli/          # CLI source code
+└── packaging/            # Package distribution files
+    └── homebrew/         # Homebrew formula for CLI installation
+        └── bdc-cli.rb    # Homebrew formula definition
 ```
 
 The UI structure follows modern Next.js best practices with a dedicated `src` directory that provides:
@@ -154,6 +157,30 @@ go build -o bdc-cli
 ```
 
 This will start the Next.js server if not running and open the dashboard in your browser.
+
+#### Installing via Homebrew
+
+You can install the BDC CLI using Homebrew:
+
+1. Add the Sysintelligent tap:
+```bash
+brew tap sysintelligent/sysintelligent
+```
+
+2. Install the CLI:
+```bash
+brew install sysintelligent/sysintelligent/bdc-cli
+```
+
+3. Verify the installation:
+```bash
+bdc-cli version
+```
+
+To uninstall the CLI:
+```bash
+brew uninstall sysintelligent/sysintelligent/bdc-cli
+```
 
 ## API Documentation
 
