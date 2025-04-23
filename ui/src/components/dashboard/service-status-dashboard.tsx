@@ -35,7 +35,7 @@ export function ServiceStatusDashboard() {
   ]
 
   function generateRandomStatuses(includeIssues = false) {
-    const statuses = []
+    const statuses: ("normal" | "degraded" | "disrupted")[] = []
     for (let i = 0; i < 7; i++) {
       if (includeIssues && (i === 2 || i === 4)) {
         statuses.push(i === 2 ? "degraded" : "disrupted")

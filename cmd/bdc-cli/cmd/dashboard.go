@@ -64,11 +64,15 @@ func isDashboardRunning() bool {
 }
 
 func startDashboardServer() {
-	// Change to the UI directory
+	// First try the development path
 	uiDir := "../../ui"
 	if err := os.Chdir(uiDir); err != nil {
-		fmt.Printf("Error changing to UI directory: %v\n", err)
-		return
+		// If development path fails, try the system-wide installation path
+		systemUiDir := "/opt/homebrew/share/bdc-cli/ui"
+		if err := os.Chdir(systemUiDir); err != nil {
+			fmt.Printf("Error: UI directory not found in either %s or %s\n", uiDir, systemUiDir)
+			return
+		}
 	}
 
 	// Start the Next.js development server
