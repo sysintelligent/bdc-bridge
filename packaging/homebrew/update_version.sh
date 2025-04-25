@@ -19,9 +19,12 @@ TAP_DIR="${HOME}/homebrew-sysintelligent"
 
 # Check if tag exists and delete it if it does
 if git tag -l "v${NEW_VERSION}" > /dev/null; then
-    echo "Tag v${NEW_VERSION} already exists. Deleting..."
-    git tag -d "v${NEW_VERSION}"
-    git push origin ":refs/tags/v${NEW_VERSION}"
+    echo "Tag v${NEW_VERSION} already exists locally. Deleting..."
+    git tag -d "v${NEW_VERSION}" || true
+fi
+if git ls-remote --tags origin "refs/tags/v${NEW_VERSION}" | grep -q "refs/tags/v${NEW_VERSION}"; then
+    echo "Tag v${NEW_VERSION} exists remotely. Deleting..."
+    git push origin ":refs/tags/v${NEW_VERSION}" || true
 fi
 
 # Create and push new tag
