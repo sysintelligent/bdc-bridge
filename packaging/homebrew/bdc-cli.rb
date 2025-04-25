@@ -14,42 +14,33 @@ class BdcCli < Formula
     libexec.install "bdc-cli-bin"
     
     # Create a wrapper script that sets up the user's home directory for UI files
-    wrapper_script = <<~BASH
-      #!/bin/bash
-      
-      # Create user home directory for bdc-cli if it doesn't exist
-      USER_BDC_DIR="${HOME}/.bdc-cli"
-      USER_UI_DIR="${USER_BDC_DIR}/ui"
-      
-      if [ ! -d "${USER_UI_DIR}" ]; then
-        mkdir -p "${USER_UI_DIR}"
-        echo "Setting up BDC CLI for first use..."
-        
-        # Copy all the UI files
-        if [ -d "#{libexec}/ui-files" ]; then
-          cp -R "#{libexec}/ui-files/"* "${USER_UI_DIR}/" 2>/dev/null || true
-          
-          # Copy hidden files and directories
-          if [ -d "#{libexec}/ui-files/.next" ]; then
-            mkdir -p "${USER_UI_DIR}/.next"
-            cp -R "#{libexec}/ui-files/.next/"* "${USER_UI_DIR}/.next/" 2>/dev/null || true
-          fi
-          
-          # Install dependencies
-          echo "Installing Node.js dependencies..."
-          cd "${USER_UI_DIR}"
-          npm install --quiet
-        else
-          echo "Warning: UI files not found. Some features may not work correctly."
-        fi
-      fi
-      
-      # Set environment variable to point to user's UI directory
-      export BDC_UI_PATH="${USER_UI_DIR}"
-      
-      # Execute the main binary
-      exec "#{libexec}/bdc-cli-bin" "$@"
-    BASH
+    wrapper_script = "#!/bin/bash\n\n"
+    wrapper_script += "# Create user home directory for bdc-cli if it doesn't exist\n"
+    wrapper_script += "USER_BDC_DIR=\"${HOME}/.bdc-cli\"\n"
+    wrapper_script += "USER_UI_DIR=\"${USER_BDC_DIR}/ui\"\n\n"
+    wrapper_script += "if [ ! -d \"${USER_UI_DIR}\" ]; then\n"
+    wrapper_script += "  mkdir -p \"${USER_UI_DIR}\"\n"
+    wrapper_script += "  echo \"Setting up BDC CLI for first use...\"\n\n"
+    wrapper_script += "  # Copy all the UI files\n"
+    wrapper_script += "  if [ -d \"#{libexec}/ui-files\" ]; then\n"
+    wrapper_script += "    cp -R \"#{libexec}/ui-files/\"* \"${USER_UI_DIR}/\" 2>/dev/null || true\n\n"
+    wrapper_script += "    # Copy hidden files and directories\n"
+    wrapper_script += "    if [ -d \"#{libexec}/ui-files/.next\" ]; then\n"
+    wrapper_script += "      mkdir -p \"${USER_UI_DIR}/.next\"\n"
+    wrapper_script += "      cp -R \"#{libexec}/ui-files/.next/\"* \"${USER_UI_DIR}/.next/\" 2>/dev/null || true\n"
+    wrapper_script += "    fi\n\n"
+    wrapper_script += "    # Install dependencies\n"
+    wrapper_script += "    echo \"Installing Node.js dependencies...\"\n"
+    wrapper_script += "    cd \"${USER_UI_DIR}\"\n"
+    wrapper_script += "    npm install --quiet\n"
+    wrapper_script += "  else\n"
+    wrapper_script += "    echo \"Warning: UI files not found. Some features may not work correctly.\"\n"
+    wrapper_script += "  fi\n"
+    wrapper_script += "fi\n\n"
+    wrapper_script += "# Set environment variable to point to user's UI directory\n"
+    wrapper_script += "export BDC_UI_PATH=\"${USER_UI_DIR}\"\n\n"
+    wrapper_script += "# Execute the main binary\n"
+    wrapper_script += "exec \"#{libexec}/bdc-cli-bin\" \"$@\"\n"
     
     (bin/"bdc-cli").write(wrapper_script)
     
@@ -87,11 +78,7 @@ class BdcCli < Formula
     end
     
     # Create a default configuration file
-    config_content = <<~JSON
-      {
-        "ui_path": "${HOME}/.bdc-cli/ui"
-      }
-    JSON
+    config_content = "{\n  \"ui_path\": \"${HOME}/.bdc-cli/ui\"\n}\n"
     (etc/"bdc-cli.conf").write(config_content)
   end
 
