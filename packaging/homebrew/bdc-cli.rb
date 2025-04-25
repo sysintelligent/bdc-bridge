@@ -14,7 +14,7 @@ class BdcCli < Formula
     libexec.install "bdc-cli-bin"
     
     # Create a wrapper script that sets up the user's home directory for UI files
-    (bin/"bdc-cli").write <<~EOS
+    wrapper_script = <<~EOS
       #!/bin/bash
       
       # Create user home directory for bdc-cli if it doesn't exist
@@ -51,6 +51,8 @@ class BdcCli < Formula
       exec "#{libexec}/bdc-cli-bin" "$@"
     EOS
     
+    (bin/"bdc-cli").write(wrapper_script)
+    
     # Ensure the script is executable
     chmod 0755, bin/"bdc-cli"
 
@@ -85,11 +87,12 @@ class BdcCli < Formula
     end
     
     # Create a default configuration file
-    (etc/"bdc-cli.conf").write <<~EOS
+    config_content = <<~EOS
       {
         "ui_path": "${HOME}/.bdc-cli/ui"
       }
     EOS
+    (etc/"bdc-cli.conf").write(config_content)
   end
 
   test do
