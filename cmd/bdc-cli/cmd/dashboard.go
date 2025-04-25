@@ -1,11 +1,15 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -64,16 +68,71 @@ func isDashboardRunning() bool {
 }
 
 func startDashboardServer() {
-	// First try the development path
-	uiDir := "../../ui"
-	if err := os.Chdir(uiDir); err != nil {
-		// If development path fails, try the system-wide installation path
-		systemUiDir := "/opt/homebrew/share/bdc-cli/ui"
-		if err := os.Chdir(systemUiDir); err != nil {
-			fmt.Printf("Error: UI directory not found in either %s or %s\n", uiDir, systemUiDir)
-			return
+	// Try to find UI path from configuration file
+	uiPath := ""
+
+	// First check environment variable
+	if envPath := os.Getenv("BDC_UI_PATH"); envPath != "" {
+		uiPath = envPath
+	} else {
+		// Check user's home directory
+		home, err := os.UserHomeDir()
+		if err == nil {
+			userUIDir := filepath.Join(home, ".bdc-cli", "ui")
+			if _, err := os.Stat(userUIDir); err == nil {
+				uiPath = userUIDir
+			}
+		}
+
+		// If not found in user's home, check the system-wide config
+		if uiPath == "" {
+			systemConfigPath := "/opt/homebrew/etc/bdc-cli.conf"
+			if _, err := os.Stat(systemConfigPath); err == nil {
+				// Read config file
+				configBytes, err := ioutil.ReadFile(systemConfigPath)
+				if err == nil {
+					var config struct {
+						UIPath string `json:"ui_path"`
+					}
+					if err := json.Unmarshal(configBytes, &config); err == nil {
+						// Expand environment variables in the path
+						if strings.Contains(config.UIPath, "${HOME}") || strings.Contains(config.UIPath, "$HOME") {
+							home, err := os.UserHomeDir()
+							if err == nil {
+								config.UIPath = strings.Replace(config.UIPath, "${HOME}", home, -1)
+								config.UIPath = strings.Replace(config.UIPath, "$HOME", home, -1)
+							}
+						}
+						uiPath = config.UIPath
+					}
+				}
+			}
+
+			// If no UI path found in system config, try development paths
+			if uiPath == "" {
+				// Try development path first
+				devPath := "../../ui"
+				if _, err := os.Stat(devPath); err == nil {
+					uiPath = devPath
+				}
+			}
 		}
 	}
+
+	if uiPath == "" {
+		fmt.Println("Error: Could not find UI directory.")
+		fmt.Println("Please make sure BDC CLI is installed correctly.")
+		return
+	}
+
+	// Change to UI directory
+	if err := os.Chdir(uiPath); err != nil {
+		fmt.Printf("Error: UI directory not found at %s\n", uiPath)
+		fmt.Println("Please make sure BDC CLI is installed correctly.")
+		return
+	}
+
+	fmt.Printf("Starting dashboard from UI path: %s\n", uiPath)
 
 	// Start the Next.js development server
 	cmd := exec.Command("npm", "run", "dev")

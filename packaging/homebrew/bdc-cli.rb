@@ -9,28 +9,72 @@ class BdcCli < Formula
   depends_on "npm" => :build
 
   def install
-    system "go", "build", "-o", "bdc-cli", "./cmd/bdc-cli"
-    bin.install "bdc-cli"
+    system "go", "build", "-o", "bdc-cli-bin", "./cmd/bdc-cli"
+    libexec.install "bdc-cli-bin"
+    
+    # Create a wrapper script that sets up the user's home directory for UI files
+    (bin/"bdc-cli").write <<~EOS
+      #!/bin/bash
+      
+      # Create user home directory for bdc-cli if it doesn't exist
+      USER_BDC_DIR="${HOME}/.bdc-cli"
+      USER_UI_DIR="${USER_BDC_DIR}/ui"
+      
+      if [ ! -d "${USER_UI_DIR}" ]; then
+        mkdir -p "${USER_UI_DIR}"
+        echo "Setting up BDC CLI for first use..."
+        
+        # Copy all the UI files
+        cp -R "#{libexec}/ui-files/"* "${USER_UI_DIR}/"
+        
+        # Copy hidden files and directories
+        if [ -d "#{libexec}/ui-files/.next" ]; then
+          mkdir -p "${USER_UI_DIR}/.next"
+          cp -R "#{libexec}/ui-files/.next/"* "${USER_UI_DIR}/.next/"
+        fi
+        
+        # Install dependencies
+        echo "Installing Node.js dependencies..."
+        cd "${USER_UI_DIR}"
+        npm install --quiet
+      fi
+      
+      # Set environment variable to point to user's UI directory
+      export BDC_UI_PATH="${USER_UI_DIR}"
+      
+      # Execute the main binary
+      exec "#{libexec}/bdc-cli-bin" "$@"
+    EOS
+    
+    # Ensure the script is executable
+    chmod 0755, bin/"bdc-cli"
 
-    # Install UI files
+    # Install UI files to a temporary location in libexec
+    mkdir_p "#{libexec}/ui-files"
+    
     cd "ui" do
       system "npm", "install"
       system "npm", "run", "build"
       
-      # Create the share directory
-      share_dir = share/"bdc-cli"
-      share_dir.mkpath
-      
-      # Install UI files
-      ui_dir = share_dir/"ui"
-      ui_dir.mkpath
-      
-      # Copy all files from the build directory
-      system "cp", "-R", ".next", ui_dir
-      system "cp", "-R", "public", ui_dir
-      system "cp", "package.json", ui_dir
-      system "cp", "next.config.js", ui_dir
+      # Copy all UI files to the temporary location
+      cp_r ".next/.", "#{libexec}/ui-files/.next"
+      cp_r "public/.", "#{libexec}/ui-files/public"
+      cp_r "src/.", "#{libexec}/ui-files/src"
+      cp "package.json", "#{libexec}/ui-files/"
+      cp "next.config.js", "#{libexec}/ui-files/"
+      cp "tsconfig.json", "#{libexec}/ui-files/"
+      cp "tailwind.config.js", "#{libexec}/ui-files/"
+      cp "postcss.config.js", "#{libexec}/ui-files/"
+      cp "next-env.d.ts", "#{libexec}/ui-files/"
+      cp "components.json", "#{libexec}/ui-files/"
     end
+    
+    # Create a default configuration file
+    (etc/"bdc-cli.conf").write <<~EOS
+      {
+        "ui_path": "${HOME}/.bdc-cli/ui"
+      }
+    EOS
   end
 
   test do
