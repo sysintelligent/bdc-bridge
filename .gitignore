@@ -45,3 +45,6 @@ cmd/bdc-cli/bdc-cli
 # Environment variables
 .env
 .env.local 
+
+# Release tarballs
+*.tar.gz 
