@@ -37,7 +37,7 @@ bdc-bridge/
 │   └── kubernetes/       # Kubernetes client integration
 └── cmd/                  # CLI implementation using Cobra
     └── bdc-cli/          # CLI source code
-└── packaging/            # Package distribution files
+└── dist/                 # Package distribution files
     └── homebrew/         # Homebrew formula for CLI installation
         └── bdc-cli.rb    # Homebrew formula definition
 ```
