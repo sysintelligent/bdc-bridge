@@ -7,7 +7,7 @@ This directory contains packaging configurations for distributing the BDC CLI to
   - [Automated Version Updates](#automated-version-updates)
   - [Manual Formula Updates](#manual-formula-updates)
   - [Testing Locally](#testing-locally)
-  - [Submitting to Homebrew Core](#submitting-to-homebrew-core)
+  - [Using the Custom Tap](#using-the-custom-tap)
 - [Current Version](#current-version)
 
 ## Formula Management
@@ -20,6 +20,20 @@ The `update_version.sh` script automates the process of updating both the local 
 - Calculating the SHA256 hash
 - Updating both local and tap formulas
 - Committing and pushing changes
+
+#### Prerequisites
+- Git access to both the main repository and the tap repository
+- GitHub CLI installed (if using GitHub releases)
+- Proper SSH keys configured for GitHub access
+- Write permissions to both repositories
+
+#### Error Handling
+The script includes several safety checks:
+- Verifies the new version is provided
+- Checks for existing tags and removes them if necessary
+- Retries SHA256 hash calculation up to 5 times
+- Verifies formula updates before committing
+- Ensures proper cleanup of temporary files
 
 To use the script:
 ```bash
@@ -53,7 +67,7 @@ If you need to update the formula manually:
 
 ### Testing Locally
 
-Test the formula before submitting to Homebrew:
+Test the formula before pushing to the tap:
 
 ```bash
 # Install from the local formula
@@ -66,13 +80,25 @@ bdc-cli version
 bdc-cli admin dashboard
 ```
 
-### Submitting to Homebrew Core
+### Using the Custom Tap
 
-1. Fork homebrew-core repository
-2. Create a new branch
-3. Add your formula
-4. Submit a pull request
+The BDC CLI is distributed through our custom Homebrew tap at [sysintelligent/homebrew-sysintelligent](https://github.com/sysintelligent/homebrew-sysintelligent). To use it:
+
+1. Add the tap to your Homebrew installation:
+   ```bash
+   brew tap sysintelligent/sysintelligent git@github.com:sysintelligent/homebrew-sysintelligent.git
+   ```
+
+2. Install the BDC CLI:
+   ```bash
+   brew install sysintelligent/sysintelligent/bdc-cli
+   ```
+
+The `update_version.sh` script automatically updates both the local formula and the tap repository when a new version is released.
 
 ## Current Version
 
-The current version in the formula is v1.0.4. See `bdc-cli.rb` for details.
+The current version can be found in `bdc-cli.rb`. To check the latest version:
+```bash
+grep "version" bdc-cli.rb
+```
