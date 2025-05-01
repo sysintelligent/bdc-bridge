@@ -164,7 +164,7 @@ You can install the BDC CLI using Homebrew:
 
 1. Add the Sysintelligent tap:
 ```bash
-brew tap sysintelligent/sysintelligent
+brew tap sysintelligent/sysintelligent git@github.com:sysintelligent/homebrew-sysintelligent.git
 ```
 
 2. Install the CLI:
